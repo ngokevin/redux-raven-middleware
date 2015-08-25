@@ -1,0 +1,42 @@
+{
+  "name": "redux-raven-middleware",
+  "version": "0.1.0",
+  "description": "Redux middleware for sending error reports to Sentry through raven-js.",
+  "main": "./index.js",
+  "dependencies": {
+    "raven-js": "^1.1.19"
+  },
+  "devDependencies": {
+    "babel": "^5.4.7",
+    "babel-runtime": "^5.8.20",
+    "mocha": "^2.2.5",
+    "sinon": "^1.16.1"
+  },
+  "scripts": {
+    "build:lib": "babel --stage 0 index.es6 -o index.js",
+    "pretest": "babel --stage 0 test.es6 -o test.js && npm run build:lib",
+    "test": "mocha test.js",
+    "prepublish": "npm run build:lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ngokevin/redux-raven-middleware"
+  },
+  "keywords": [
+    "react",
+    "redux",
+    "raven",
+    "raven-js",
+    "sentry",
+    "middleware",
+    "crash",
+    "error",
+    "report"
+  ],
+  "author": "Kevin Ngo <me@ngokevin.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ngokevin/redux-raven-middleware/issues"
+  },
+  "homepage": "https://github.com/ngokevin/redux-raven-middleware"
+}
