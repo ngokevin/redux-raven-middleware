@@ -1,13 +1,12 @@
 import Raven from 'raven-js'
 
 
-export default function createMiddleware(dsn, cfg={}, opt={}) {
+export default function createMiddleware(dsn, cfg={}) {
   /*
     Function that generates a crash reporter for Sentry.
 
     dsn - private Sentry DSN.
     cfg - object to configure Raven.
-    opt - object with extra configuration to send with captureException.
   */
   if (!dsn) {
     // Skip this middleware if there is no DSN.
@@ -26,17 +25,13 @@ export default function createMiddleware(dsn, cfg={}, opt={}) {
       console.error('[redux-raven-middleware] Reporting error to Sentry:',
                     err);
 
-      // Allow the user to extend, but not replace, extra.
-      const extra = {...{
-        action: action,
-        state: store.getState()
-      }, ...(opt.extra || {})};
-      delete opt.extra;
-
       // Send the report.
-      Raven.captureException(err, {...{
-        extra
-      }, ...opt});
+      Raven.captureException(err, {
+        extra: {
+          action: action,
+          state: store.getState(),
+        }
+      });
     }
   }
 }

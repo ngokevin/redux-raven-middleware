@@ -1,27 +1,42 @@
 import assert from 'assert';
-import Raven from 'raven-js';
+import _jsdom from 'jsdom';
+import mochaJsdom from 'mocha-jsdom';
 import sinon from 'sinon';
 
-import createRavenMiddleware from './index';
 
+// Need jsdom since Raven uses `window.setTimeout` because specifying `window`
+// is totally necessary.
+global.document = _jsdom.jsdom('<html><body></body></html>');
+global.window = document.parentWindow;
+global.navigator = window.navigator;
+const jsdom = mochaJsdom.bind(this, {skipWindowCheck: true});
 
-sinon.stub(Raven, 'config', () => {
-  return {install: () => {}}
-});
 
 const stubStore = {
-  getState: () => ({})
+  getState: () => ({test: 'test'})
 };
 
 const mockNextHandler = action => {
   if (action.error) {
     throw new Error('Test Error');
   }
-  return () => {};
 };
 
 
 describe('createRavenMiddleware', () => {
+  jsdom();
+  const createRavenMiddleware = require('./index');
+  const Raven = require('raven-js');
+
+  beforeEach(() => {
+    sinon.stub(Raven, 'config', () => {
+      return {install: () => {}}
+    });
+  });
+  afterEach(() => {
+    Raven.config.restore();
+  });
+
   it('returns middleware', () => {
     assert.equal(createRavenMiddleware.constructor, Function);
   });
@@ -37,12 +52,25 @@ describe('createRavenMiddleware', () => {
     assert.equal(actionHandler.length, 1);
   });
 
-  it('catches error', () => {
-    const actionHandler = createRavenMiddleware('abc')(stubStore)(action => {
-      if (action.error) {
-        throw new Error('Test Error');
-      }
+  it('configures Raven', done => {
+    Raven.config.restore();
+    sinon.stub(Raven, 'config', (dsn, cfg) => {
+      assert.equal(dsn, 'abc');
+      assert.deepEqual(cfg, {tags: {test: 'test'}});
+      done();
+
+      return {install: () => {}};
     });
-    console.log(actionHandler({error: true}));
+    createRavenMiddleware('abc', {tags: {test: 'test'}})
+  });
+
+  it('reports error', () => {
+    const ravenSpy = sinon.spy(Raven, 'captureException');
+    createRavenMiddleware('abc')(stubStore)(mockNextHandler)({error: true});
+
+    assert.equal(ravenSpy.args[0][0].constructor, Error);
+    assert.equal(ravenSpy.args[0][0].message, 'Test Error');
+    assert.deepEqual(ravenSpy.args[0][1].extra.action, {error: true});
+    assert.deepEqual(ravenSpy.args[0][1].extra.state, {test: 'test'});
   });
 });
