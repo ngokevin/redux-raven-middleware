@@ -18,6 +18,8 @@ var _sinon = require('sinon');
 
 var _sinon2 = _interopRequireDefault(_sinon);
 
+// Need jsdom since Raven uses `window.setTimeout` because specifying `window`
+// is totally necessary.
 global.document = _jsdom3['default'].jsdom('<html><body></body></html>');
 global.window = document.parentWindow;
 global.navigator = window.navigator;
