@@ -8,15 +8,16 @@ export default function createMiddleware(dsn, cfg={}) {
     dsn - private Sentry DSN.
     cfg - object to configure Raven.
   */
-  if (!dsn) {
-    // Skip this middleware if there is no DSN.
-    console.error('[redux-raven-middleware] Sentry DSN required.');
-    return store => next => action => {
-      next(action);
-    };
+  if (!Raven.isSetup()) {
+    if (!dsn) {
+      // Skip this middleware if there is no DSN.
+      console.error('[redux-raven-middleware] Sentry DSN required.');
+      return store => next => action => {
+        next(action);
+      };
+    }
+    Raven.config(dsn, cfg).install();
   }
-
-  Raven.config(dsn, cfg).install();
 
   return store => next => action => {
     try {
