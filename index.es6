@@ -1,4 +1,4 @@
-import Raven from 'raven-js'
+import Raven from 'raven-js';
 
 
 export default function createMiddleware(dsn, cfg={}) {
