@@ -38,6 +38,10 @@ function createMiddleware(dsn) {
     return function (next) {
       return function (action) {
         try {
+          _ravenJs2['default'].captureBreadcrumb({
+            data: { redux: action.type }
+          });
+
           return next(action);
         } catch (err) {
           console.error('[redux-raven-middleware] Reporting error to Sentry:', err);
