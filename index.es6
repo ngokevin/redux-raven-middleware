@@ -1,5 +1,4 @@
-import Raven from 'raven-js'
-
+import Raven from 'raven-js';
 
 export default function createMiddleware(dsn, cfg={}) {
   /*
@@ -21,10 +20,13 @@ export default function createMiddleware(dsn, cfg={}) {
 
   return store => next => action => {
     try {
+      Raven.captureBreadcrumb({
+        data: { redux: action.type }
+      });
+
       return next(action);
     } catch (err) {
-      console.error('[redux-raven-middleware] Reporting error to Sentry:',
-                    err);
+      console.error('[redux-raven-middleware] Reporting error to Sentry:', err);
 
       // Send the report.
       Raven.captureException(err, {

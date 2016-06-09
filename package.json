@@ -4,7 +4,7 @@
   "description": "Redux middleware for sending error reports to Sentry through raven-js.",
   "main": "./index.js",
   "dependencies": {
-    "raven-js": "^1.1.19"
+    "raven-js": "^3.0.5"
   },
   "devDependencies": {
     "babel": "^5.4.7",
