@@ -21,7 +21,8 @@ export default function createMiddleware(dsn, cfg={}) {
   return store => next => action => {
     try {
       Raven.captureBreadcrumb({
-        data: { redux: action.type }
+        category: 'redux',
+        message: action.type
       });
 
       return next(action);
