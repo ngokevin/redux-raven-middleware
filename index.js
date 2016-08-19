@@ -39,7 +39,8 @@ function createMiddleware(dsn) {
       return function (action) {
         try {
           _ravenJs2['default'].captureBreadcrumb({
-            data: { redux: action.type }
+            category: 'redux',
+            message: action.type
           });
 
           return next(action);
