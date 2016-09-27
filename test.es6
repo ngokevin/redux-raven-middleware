@@ -27,6 +27,7 @@ describe('createRavenMiddleware', () => {
   jsdom();
   const createRavenMiddleware = require('./index');
   const Raven = require('raven-js');
+  const ravenSpy = sinon.spy(Raven, 'captureException');
 
   beforeEach(() => {
     sinon.stub(Raven, 'config', () => {
@@ -35,6 +36,7 @@ describe('createRavenMiddleware', () => {
   });
   afterEach(() => {
     Raven.config.restore();
+    ravenSpy.reset();
   });
 
   it('returns middleware', () => {
@@ -65,12 +67,38 @@ describe('createRavenMiddleware', () => {
   });
 
   it('reports error', () => {
-    const ravenSpy = sinon.spy(Raven, 'captureException');
     createRavenMiddleware('abc')(stubStore)(mockNextHandler)({error: true});
 
     assert.equal(ravenSpy.args[0][0].constructor, Error);
     assert.equal(ravenSpy.args[0][0].message, 'Test Error');
     assert.deepEqual(ravenSpy.args[0][1].extra.action, {error: true});
     assert.deepEqual(ravenSpy.args[0][1].extra.state, {test: 'test'});
+  });
+
+  it('reports error with transformed state and action', () => {
+    const actionTransformer = action => action.error
+    const stateTransformer = state => state.test
+    const cfg = {}
+    const opts = { actionTransformer, stateTransformer }
+    createRavenMiddleware('abc', cfg, opts)(stubStore)(mockNextHandler)({error: true});
+
+    assert.equal(ravenSpy.args[0][0].constructor, Error);
+    assert.equal(ravenSpy.args[0][0].message, 'Test Error');
+    assert.equal(ravenSpy.args[0][1].extra.action, true);
+    assert.equal(ravenSpy.args[0][1].extra.state, 'test');
+  });
+
+  it('logs via custom logger', () => {
+    const logger = sinon.spy()
+    const cfg = {}
+    const opts = { logger }
+    createRavenMiddleware('abc', cfg, opts)(stubStore)(mockNextHandler)({error: true});
+
+    assert.equal(ravenSpy.args[0][0].constructor, Error);
+    assert.equal(ravenSpy.args[0][0].message, 'Test Error');
+    assert.deepEqual(ravenSpy.args[0][1].extra.action, {error: true});
+    assert.deepEqual(ravenSpy.args[0][1].extra.state, {test: 'test'});
+    assert(logger.calledOnce, 'logs one message')
+    assert.equal(logger.args[0][0], ravenSpy.args[0][0])
   });
 });
