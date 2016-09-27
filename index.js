@@ -51,7 +51,7 @@ function createMiddleware(dsn) {
         var _options$stateTransformer = options.stateTransformer;
         var stateTransformer = _options$stateTransformer === undefined ? identity : _options$stateTransformer;
         var _options$logger = options.logger;
-        var logger = _options$logger === undefined ? console.error : _options$logger;
+        var logger = _options$logger === undefined ? console.error.bind(console, '[redux-raven-middleware] Reporting error to Sentry:') : _options$logger;
 
         try {
           _ravenJs2['default'].captureBreadcrumb({
@@ -61,7 +61,7 @@ function createMiddleware(dsn) {
 
           return next(action);
         } catch (err) {
-          logger('[redux-raven-middleware] Reporting error to Sentry:', err);
+          logger(err);
 
           // Send the report.
           _ravenJs2['default'].captureException(err, {

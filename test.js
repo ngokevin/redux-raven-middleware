@@ -117,6 +117,6 @@ describe('createRavenMiddleware', function () {
     _assert2['default'].deepEqual(ravenSpy.args[0][1].extra.action, { error: true });
     _assert2['default'].deepEqual(ravenSpy.args[0][1].extra.state, { test: 'test' });
     (0, _assert2['default'])(logger.calledOnce, 'logs one message');
-    (0, _assert2['default'])(logger.args[0][0].indexOf('[redux-raven-middleware]') === 0, 'logs the correct message');
+    _assert2['default'].equal(logger.args[0][0], ravenSpy.args[0][0]);
   });
 });

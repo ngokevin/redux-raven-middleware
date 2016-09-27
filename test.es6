@@ -99,6 +99,6 @@ describe('createRavenMiddleware', () => {
     assert.deepEqual(ravenSpy.args[0][1].extra.action, {error: true});
     assert.deepEqual(ravenSpy.args[0][1].extra.state, {test: 'test'});
     assert(logger.calledOnce, 'logs one message')
-    assert(logger.args[0][0].indexOf('[redux-raven-middleware]') === 0, 'logs the correct message')
+    assert.equal(logger.args[0][0], ravenSpy.args[0][0])
   });
 });
