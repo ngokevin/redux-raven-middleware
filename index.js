@@ -27,6 +27,7 @@ function createMiddleware(dsn) {
       actionTransformer - tranform the action object to send; default to identity function
       stateTransformer - transform the state object to send; default to identity function
       logger - the logger to use for logging; default to console.error
+      enableBreadcrumbsCapture - whether to send breadcrumbs as part of request; default to true
   */
   if (!_ravenJs2['default'].isSetup()) {
     if (!dsn) {
@@ -52,12 +53,16 @@ function createMiddleware(dsn) {
         var stateTransformer = _options$stateTransformer === undefined ? identity : _options$stateTransformer;
         var _options$logger = options.logger;
         var logger = _options$logger === undefined ? console.error.bind(console, '[redux-raven-middleware] Reporting error to Sentry:') : _options$logger;
+        var _options$enableBreadcrumbsCapture = options.enableBreadcrumbsCapture;
+        var enableBreadcrumbsCapture = _options$enableBreadcrumbsCapture === undefined ? true : _options$enableBreadcrumbsCapture;
 
         try {
-          _ravenJs2['default'].captureBreadcrumb({
-            category: 'redux',
-            message: action.type
-          });
+          if (enableBreadcrumbsCapture) {
+            _ravenJs2['default'].captureBreadcrumb({
+              category: 'redux',
+              message: action.type
+            });
+          }
 
           return next(action);
         } catch (err) {

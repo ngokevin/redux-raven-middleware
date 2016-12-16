@@ -17,6 +17,7 @@ Creates a Raven Middleware.
  - `actionTransformer` -- transform the action before sending to Sentry
  - `stateTransformer` -- transform the state before sending to Sentry
  - `logger` -- log function to use instead of `console.error`
+ - `enableBreadcrumbsCapture` -- whether to send breadcrumbs as part of request
 
 ```js
 import {applyMiddleware, createStore} from 'redux';
