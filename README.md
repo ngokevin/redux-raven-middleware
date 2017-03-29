@@ -1,5 +1,7 @@
 # redux-raven-middleware
 
+> Also check out [Raven for Redux](https://github.com/captbaritone/raven-for-redux).
+
 Redux middleware for sending error reports to Sentry through raven-js.
 
 Will automatically send an error report upon encountering a Javascript error
