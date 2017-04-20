@@ -9,9 +9,7 @@
   "devDependencies": {
     "babel": "^5.4.7",
     "babel-runtime": "^5.8.20",
-    "jsdom": "^3.1.2",
     "mocha": "^2.2.5",
-    "mocha-jsdom": "^1.0.0",
     "sinon": "^1.16.1"
   },
   "scripts": {
