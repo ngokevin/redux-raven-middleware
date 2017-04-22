@@ -1,15 +1,5 @@
 import assert from 'assert';
-import _jsdom from 'jsdom';
-import mochaJsdom from 'mocha-jsdom';
 import sinon from 'sinon';
-
-
-// Need jsdom since Raven uses `window.setTimeout` because specifying `window`
-// is totally necessary.
-global.document = _jsdom.jsdom('<html><body></body></html>');
-global.window = document.parentWindow;
-global.navigator = window.navigator;
-const jsdom = mochaJsdom.bind(this, {skipWindowCheck: true});
 
 
 const stubStore = {
@@ -24,7 +14,6 @@ const mockNextHandler = action => {
 
 
 describe('createRavenMiddleware', () => {
-  jsdom();
   const createRavenMiddleware = require('./index');
   const Raven = require('raven-js');
   const ravenSpy = sinon.spy(Raven, 'captureException');
