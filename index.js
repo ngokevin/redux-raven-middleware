@@ -1,15 +1,15 @@
 'use strict';
 
-Object.defineProperty(exports, '__esModule', {
+Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports['default'] = createMiddleware;
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+exports.default = createMiddleware;
 
 var _ravenJs = require('raven-js');
 
 var _ravenJs2 = _interopRequireDefault(_ravenJs);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var identity = function identity(stuff) {
   return stuff;
@@ -27,8 +27,9 @@ function createMiddleware(dsn) {
       actionTransformer - tranform the action object to send; default to identity function
       stateTransformer - transform the state object to send; default to identity function
       logger - the logger to use for logging; default to console.error
+      disableBreadcrumbsCapture - whether to disable sending breadcrumbs as part of request; default to false
   */
-  if (!_ravenJs2['default'].isSetup()) {
+  if (!_ravenJs2.default.isSetup()) {
     if (!dsn) {
       // Skip this middleware if there is no DSN.
       console.error('[redux-raven-middleware] Sentry DSN required.');
@@ -40,31 +41,34 @@ function createMiddleware(dsn) {
         };
       };
     }
-    _ravenJs2['default'].config(dsn, cfg).install();
+    _ravenJs2.default.config(dsn, cfg).install();
   }
 
   return function (store) {
     return function (next) {
       return function (action) {
-        var _options$actionTransformer = options.actionTransformer;
-        var actionTransformer = _options$actionTransformer === undefined ? identity : _options$actionTransformer;
-        var _options$stateTransformer = options.stateTransformer;
-        var stateTransformer = _options$stateTransformer === undefined ? identity : _options$stateTransformer;
+        var _options$actionTransf = options.actionTransformer;
+        var actionTransformer = _options$actionTransf === undefined ? identity : _options$actionTransf;
+        var _options$stateTransfo = options.stateTransformer;
+        var stateTransformer = _options$stateTransfo === undefined ? identity : _options$stateTransfo;
         var _options$logger = options.logger;
         var logger = _options$logger === undefined ? console.error.bind(console, '[redux-raven-middleware] Reporting error to Sentry:') : _options$logger;
+        var _options$disableBread = options.disableBreadcrumbsCapture;
+        var disableBreadcrumbsCapture = _options$disableBread === undefined ? false : _options$disableBread;
 
         try {
-          _ravenJs2['default'].captureBreadcrumb({
-            category: 'redux',
-            message: action.type
-          });
-
+          if (!disableBreadcrumbsCapture) {
+            _ravenJs2.default.captureBreadcrumb({
+              category: 'redux',
+              message: action.type
+            });
+          }
           return next(action);
         } catch (err) {
           logger(err);
 
           // Send the report.
-          _ravenJs2['default'].captureException(err, {
+          _ravenJs2.default.captureException(err, {
             extra: {
               action: actionTransformer(action),
               state: stateTransformer(store.getState())
@@ -75,5 +79,3 @@ function createMiddleware(dsn) {
     };
   };
 }
-
-module.exports = exports['default'];
