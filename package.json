@@ -1,10 +1,11 @@
 {
   "name": "redux-raven-middleware",
-  "version": "1.2.1",
+  "version": "2.0.0",
   "description": "Redux middleware for sending error reports to Sentry through raven-js.",
   "main": "./index.js",
   "dependencies": {
-    "raven-js": "^3.1.1"
+    "raven-for-redux": "^1.0.0",
+    "raven-js": "^3.9.0"
   },
   "devDependencies": {
     "babel": "^5.4.7",
