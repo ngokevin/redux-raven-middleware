@@ -16,9 +16,9 @@ Creates a Raven Middleware.
 - `sentryDSN` -- string representing your Sentry instance.
 - `sentryConfig` -- object that will be passed into Raven.config.
 - `middlewareOptions` -- object to customize the middleware:
- - `actionTransformer` -- transform the action before sending to Sentry
- - `stateTransformer` -- transform the state before sending to Sentry
- - `logger` -- log function to use instead of `console.error`
+  - `actionTransformer` -- transform the action before sending to Sentry
+  - `stateTransformer` -- transform the state before sending to Sentry
+  - `logger` -- log function to use instead of `console.error`
 
 ```js
 import {applyMiddleware, createStore} from 'redux';
