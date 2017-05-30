@@ -7,15 +7,14 @@ exports['default'] = createMiddleware;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _ravenJs = require('raven-js');
-
-var _ravenJs2 = _interopRequireDefault(_ravenJs);
-
 var identity = function identity(stuff) {
   return stuff;
 };
 
 function createMiddleware(dsn) {
+  var _ravenJs = require('raven-js');
+  var _ravenJs2 = _interopRequireDefault(_ravenJs);
+
   var cfg = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
   var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
 
